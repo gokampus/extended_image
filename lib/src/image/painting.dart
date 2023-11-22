@@ -2,6 +2,7 @@
 
 import 'dart:math';
 import 'dart:ui' as ui show Image;
+
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 
@@ -199,12 +200,9 @@ void paintExtendedImage(
     if (repeat == ImageRepeat.noRepeat) {
       canvas.drawImageRect(image, sourceRect, destinationRect, paint);
     } else {
-      final ImageTilingInfo info =
-          createTilingInfo(repeat, rect, destinationRect, sourceRect);
-      final ImageShader shader = ImageShader(
-          image, info.tmx, info.tmy, info.transform.storage,
-          filterQuality: filterQuality);
-      canvas.drawRect(rect, paint..shader = shader);
+      for (final Rect tileRect
+          in _generateImageTileRects(rect, sourceRect, repeat))
+        canvas.drawImageRect(image, tileRect, destinationRect, paint);
     }
   } else {
     canvas.scale(1 / scale);
